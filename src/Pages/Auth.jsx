@@ -59,30 +59,42 @@ function Auth({ register }) {
         }
     };
 //Login Data function
-    const loginData = async () => {
-        if (!handleValidation()) {
-            return;
-        }
-        else {
+const loginData = async () => {
+    if (!handleValidation()) {
+        console.log("Validation failed");
+        return;
+    } else {
+        console.log("Validation passed");
+        try {
             const result = await loginAPI(userData);
-            console.log(result);
+            console.log("Login API response:", result);
             if (result.status === 200) {
                 const user = result.data.user;
+                console.log("User data:", user);
                 sessionStorage.setItem("existingUser", JSON.stringify(user));
                 sessionStorage.setItem("token", result.data.token);
+                console.log("Login successful");
                 toast.success("Login successful", {
                     closeButton: <Button variant="outline-light">OK</Button>,
                     onClose: () => {
-                        navigate('/user')
+                        navigate('/user');
                     }
-                })
+                });
             } else {
+                console.log("Login failed:", result.response.data);
                 toast.error(result.response.data, {
                     closeButton: <Button variant="outline-light">OK</Button>,
                 });
             }
+        } catch (error) {
+            console.error("Error during login:", error);
+            toast.error("An error occurred during login", {
+                closeButton: <Button variant="outline-light">OK</Button>,
+            });
         }
-    };
+    }
+};
+
 
 //Send Mail Function
     const handleSendOtp = async () => {
